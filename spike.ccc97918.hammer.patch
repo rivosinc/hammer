@@ -1,0 +1,308 @@
+diff --git a/fesvr/htif.h b/fesvr/htif.h
+index ca5b3625..00338c4d 100644
+--- a/fesvr/htif.h
++++ b/fesvr/htif.h
+@@ -3,6 +3,10 @@
+ #ifndef __HTIF_H
+ #define __HTIF_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++#pragma GCC diagnostic ignored "-Wunused-parameter"
++
+ #include "memif.h"
+ #include "syscall.h"
+ #include "device.h"
+@@ -145,4 +149,6 @@ TARGET (RISC-V BINARY) OPTIONS\n\
+ {"signature-granularity",    optional_argument, 0, HTIF_LONG_OPTIONS_OPTIND + 5 },     \
+ {0, 0, 0, 0}
+ 
++#pragma GCC diagnostic pop
++
+ #endif // __HTIF_H
+diff --git a/fesvr/memif.h b/fesvr/memif.h
+index 001c4254..a46c0831 100644
+--- a/fesvr/memif.h
++++ b/fesvr/memif.h
+@@ -3,6 +3,9 @@
+ #ifndef __MEMIF_H
+ #define __MEMIF_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++
+ #include <stdint.h>
+ #include <stddef.h>
+ #include "byteorder.h"
+@@ -79,4 +82,6 @@ protected:
+   chunked_memif_t* cmemif;
+ };
+ 
++#pragma GCC diagnostic pop
++
+ #endif // __MEMIF_H
+diff --git a/riscv/cachesim.h b/riscv/cachesim.h
+index b7f90143..3a4d744e 100644
+--- a/riscv/cachesim.h
++++ b/riscv/cachesim.h
+@@ -3,6 +3,9 @@
+ #ifndef _RISCV_CACHE_SIM_H
+ #define _RISCV_CACHE_SIM_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wunused-parameter"
++
+ #include "memtracer.h"
+ #include <cstring>
+ #include <string>
+@@ -50,7 +53,7 @@ class cache_sim_t
+   size_t idx_shift;
+ 
+   uint64_t* tags;
+-  
++
+   uint64_t read_accesses;
+   uint64_t read_misses;
+   uint64_t bytes_read;
+@@ -132,4 +135,6 @@ class dcache_sim_t : public cache_memtracer_t
+   }
+ };
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/riscv/csrs.h b/riscv/csrs.h
+index cabd61ed..86092358 100644
+--- a/riscv/csrs.h
++++ b/riscv/csrs.h
+@@ -2,6 +2,9 @@
+ #ifndef _RISCV_CSRS_H
+ #define _RISCV_CSRS_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wignored-qualifiers"
++
+ // For reg_t:
+ #include "decode.h"
+ // For std::shared_ptr
+@@ -739,4 +742,6 @@ class virtualized_stimecmp_csr_t: public virtualized_csr_t {
+   virtualized_stimecmp_csr_t(processor_t* const proc, csr_t_p orig, csr_t_p virt);
+   virtual void verify_permissions(insn_t insn, bool write) const override;
+ };
++
++
+ #endif
+diff --git a/riscv/mmu.h b/riscv/mmu.h
+index 9a93f167..1ad31eed 100644
+--- a/riscv/mmu.h
++++ b/riscv/mmu.h
+@@ -3,6 +3,16 @@
+ #ifndef _RISCV_MMU_H
+ #define _RISCV_MMU_H
+ 
++#pragma GCC diagnostic push
++
++#if defined(__clang__)
++#pragma GCC diagnostic ignored "-Wc99-extensions"
++#pragma GCC diagnostic ignored "-Wgnu-statement-expression"
++#endif
++
++#pragma GCC diagnostic ignored "-Wunused-parameter"
++#pragma GCC diagnostic ignored "-Wunused-variable"
++
+ #include "decode.h"
+ #include "trap.h"
+ #include "common.h"
+@@ -571,4 +581,6 @@ inline vm_info decode_vm_info(int xlen, bool stage2, reg_t prv, reg_t satp)
+   }
+ }
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/riscv/processor.h b/riscv/processor.h
+index 073b25bb..536c7861 100644
+--- a/riscv/processor.h
++++ b/riscv/processor.h
+@@ -2,6 +2,9 @@
+ #ifndef _RISCV_PROCESSOR_H
+ #define _RISCV_PROCESSOR_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wunused-function"
++
+ #include "decode.h"
+ #include "config.h"
+ #include "trap.h"
+@@ -473,4 +476,6 @@ public:
+   triggers::module_t TM;
+ };
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
+index 45fe2eb8..a045f665 100644
+--- a/riscv/riscv.mk.in
++++ b/riscv/riscv.mk.in
+@@ -3,8 +3,14 @@ get_opcode = $(shell grep ^DECLARE_INSN.*\\\<$(2)\\\> $(1) | sed 's/DECLARE_INSN
+ 
+ riscv_subproject_deps = \
+ 	fdt \
++	disasm \
++	fesvr \
+ 	softfloat \
+ 
++riscv_CFLAGS = -fPIC
++
++riscv_install_shared_lib = yes
++
+ riscv_install_prog_srcs = \
+ 
+ riscv_hdrs = \
+@@ -37,7 +43,31 @@ riscv_hdrs = \
+ 	csrs.h \
+ 	triggers.h \
+ 
+-riscv_install_hdrs = mmio_plugin.h
++riscv_install_hdrs = \
++  abstract_device.h \
++  cachesim.h \
++  cfg.h \
++  common.h \
++  csrs.h \
++  debug_module.h \
++  debug_rom_defines.h \
++  decode.h \
++  devices.h \
++  encoding.h \
++  entropy_source.h \
++  isa_parser.h \
++  log_file.h \
++  memtracer.h \
++  mmio_plugin.h \
++  mmu.h \
++  p_ext_macros.h \
++  platform.h \
++  processor.h \
++  sim.h \
++  simif.h \
++  trap.h \
++  triggers.h \
++  v_ext_macros.h
+ 
+ riscv_precompiled_hdrs = \
+ 	insn_template.h \
+diff --git a/riscv/sim.h b/riscv/sim.h
+index c355f316..97eebfcf 100644
+--- a/riscv/sim.h
++++ b/riscv/sim.h
+@@ -3,6 +3,10 @@
+ #ifndef _RISCV_SIM_H
+ #define _RISCV_SIM_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++#pragma GCC diagnostic ignored "-Wunused-parameter"
++
+ #include "config.h"
+ 
+ #ifdef HAVE_BOOST_ASIO
+@@ -172,4 +176,6 @@ public:
+ 
+ extern volatile bool ctrlc_pressed;
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/riscv/simif.h b/riscv/simif.h
+index 0e75d45b..23add883 100644
+--- a/riscv/simif.h
++++ b/riscv/simif.h
+@@ -3,6 +3,9 @@
+ #ifndef _RISCV_SIMIF_H
+ #define _RISCV_SIMIF_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++
+ #include "decode.h"
+ 
+ // this is the interface to the simulator used by the processors and memory
+@@ -21,4 +24,6 @@ public:
+ 
+ };
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/riscv/trap.h b/riscv/trap.h
+index 8347c6eb..d3167872 100644
+--- a/riscv/trap.h
++++ b/riscv/trap.h
+@@ -3,6 +3,9 @@
+ #ifndef _RISCV_TRAP_H
+ #define _RISCV_TRAP_H
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++
+ #include "decode.h"
+ #include <cstdio>
+ 
+@@ -118,4 +121,6 @@ DECLARE_MEM_GVA_TRAP(CAUSE_LOAD_GUEST_PAGE_FAULT, load_guest_page_fault)
+ DECLARE_INST_TRAP(CAUSE_VIRTUAL_INSTRUCTION, virtual_instruction)
+ DECLARE_MEM_GVA_TRAP(CAUSE_STORE_GUEST_PAGE_FAULT, store_guest_page_fault)
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+diff --git a/softfloat/softfloat.mk.in b/softfloat/softfloat.mk.in
+index a20ab7ee..f33bfe79 100644
+--- a/softfloat/softfloat.mk.in
++++ b/softfloat/softfloat.mk.in
+@@ -238,4 +238,11 @@ softfloat_install_shared_lib = yes
+ 
+ softfloat_test_srcs =
+ 
+-softfloat_install_prog_srcs =
++softfloat_install_hdrs = \
++ softfloat.h \
++ softfloat_types.h \
++ primitives.h \
++ internals.h \
++ platform.h \
++ primitiveTypes.h \
++ specialize.h
+diff --git a/softfloat/specialize.h b/softfloat/specialize.h
+index 556476c1..f680fe5a 100644
+--- a/softfloat/specialize.h
++++ b/softfloat/specialize.h
+@@ -37,6 +37,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #ifndef specialize_h
+ #define specialize_h 1
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wunused-parameter"
++
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include "primitiveTypes.h"
+@@ -425,5 +428,7 @@ void
+ }
+ #endif
+ 
++#pragma GCC diagnostic pop
++
+ #endif
+ 
+diff --git a/spike_main/spike_main.mk.in b/spike_main/spike_main.mk.in
+index 35bef398..ec6c8174 100644
+--- a/spike_main/spike_main.mk.in
++++ b/spike_main/spike_main.mk.in
+@@ -14,3 +14,5 @@ spike_main_install_prog_srcs = \
+ spike_main_hdrs = \
+ 
+ spike_main_srcs = \
++
++spike_main_CFLAGS = -fPIC

@@ -1,0 +1,6 @@
+[MESSAGES CONTROL]
+
+disable=
+        W0511,
+        C0301,
+        W1203,

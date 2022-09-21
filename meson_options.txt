@@ -1,0 +1,4 @@
+option('spike_install_dir',
+       type : 'string',
+       value : '',
+       description : 'Install directory containing the Spike headers and libraries')

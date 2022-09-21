@@ -1,0 +1,32 @@
+include:
+  # https://gitlab.ba.rivosinc.com/rv/group_gitlab_config/raw/rivos/main/ci_includes/pre-commit-lint.yml
+  - project: 'rv/group_gitlab_config'
+    ref: rivos/main
+    file: '/ci_includes/pre-commit-lint.yml'
+
+stages:
+  - prebuild
+  - build
+
+variables:
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
+
+default:
+  before_script:
+    - module load rivos/init
+    # Below doesn't work.  Only way to work is relative URL in .gitmodules: https://gitlab.com/gitlab-org/gitlab/-/issues/35649
+    # - git config url."https://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.ba.rivosinc.com".insteadOf git@gitlab.ba.rivosinc.com
+  tags: [shell]
+
+build-and-test:
+  stage: build
+  rules:
+    # run if MR or periodic to check if infra change breaks something
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "schedule"
+  script:
+    - meson setup builddir --native-file native-file.txt --buildtype release
+    - echo "BUILDING HAMMER"
+    - meson compile -C builddir
+    - echo "TESTING"
+    - meson test -C builddir

@@ -1,0 +1,86 @@
+repos:
+  # pull mirror from: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/pre-commit-hooks.git
+    rev: v4.1.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+      - id: debug-statements
+      - id: detect-private-key
+      - id: forbid-new-submodules
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        exclude: ".patch"
+
+  # - repo: https://github.com/PyCQA/isort
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/isort
+    rev: "5.10.1"
+    hooks:
+      - id: isort
+        args:
+          - --profile
+          - google
+          - --filter-files
+
+  # pull mirror from: https://github.com/google/yapf
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/yapf
+    rev: v0.31.0
+    hooks:
+      - id: yapf
+
+  # pull mirror from: https://github.com/Lucas-C/pre-commit-hooks
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/lucas-c-pre-commit-hooks
+    rev: v1.1.11
+    hooks:
+      - id: insert-license
+        files: \.py$
+        args:
+          - --license-filepath
+          - LICENSE_HDR.txt
+      - id: insert-license
+        files: \.(c|h|cc|cpp|S|svh|sv|svp)$
+        args:
+          - --license-filepath
+          - LICENSE_HDR.txt
+          - --comment-style
+          - //
+
+  # pull mirror from: https://github.com/jumanjihouse/pre-commit-hooks.git
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/jumanjihouse_pre-commit-hooks
+    rev: 2.1.5
+    hooks:
+      - id: shellcheck
+      - id: shfmt
+        args:
+          - -i 2
+          - -ci
+
+  # pull mirror of https://github.com/ikamensh/flynt/
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/flynt
+    rev: '0.76'
+    hooks:
+      - id: flynt
+
+  # pull mirror of https://github.com/asottile/pyupgrade
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/pyupgrade
+    rev: v2.31.0
+    hooks:
+      - id: pyupgrade
+
+  # mirror of https://github.com/pre-commit/mirrors-clang-format
+  - repo: https://gitlab.ba.rivosinc.com/pub/it/mirrors-clang-format
+    rev: v13.0.1
+    hooks:
+      - id: clang-format

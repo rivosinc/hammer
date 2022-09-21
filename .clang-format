@@ -1,0 +1,11 @@
+# Based off Open Titan's
+BasedOnStyle: Google
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+# Rivos
+ColumnLimit: 100
+UseTab: Never
+SortIncludes: false
