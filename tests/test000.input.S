@@ -11,7 +11,7 @@ _start:
   li  x2, 2
   add x3, x2, x1; # x3 = x2 + x1
 
-  li  a3, 0x0000000a00000200
+  li  a3, 0xa00002200
   csrw    mstatus, a3
 
   vsetivli x1, 4, e32, m1
@@ -26,6 +26,9 @@ _start:
   vmv.s.x v3, a3
 
   vadd.vv v3, v2, v1
+
+  li x1, 0x3fc00000
+  fmv.w.x f1, x1
 
   # Magic instruction to terminate the run.
   lui x0, 0xdeadb

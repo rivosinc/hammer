@@ -28,6 +28,10 @@ def main():
     hammer = pyhammer.Hammer("RV64GCV", "MSU", "vlen:512,elen:64", hart_ids, [mem_layout], elf_name,
                              None)
 
+    flen = hammer.get_flen(0)
+    if (flen != 64):
+        sys.exit(f"Unexpected flen: {flen}")
+
     vlen = hammer.get_vlen(0)
     if (vlen != 512):
         sys.exit(f"Unexpected vlen: {vlen}")
@@ -58,7 +62,7 @@ def main():
     if (current_x3 != 3):
         sys.exit(f'Unexpected x3: {current_x3}')
 
-    for _ in range(12):
+    for _ in range(13):
         hammer.single_step(0)
 
     # TODO: add a read of the mstatus CSR which is set by this point
@@ -86,6 +90,13 @@ def main():
 
     if (v3[0] != 0x3000 or v3[1] != 0x0 or v3[2] != 0x0 or v3[3] != 0):
         sys.exit(f"Unexpected value in v3: 0x{v3[3]:x}{v3[2]:x}{v3[1]:x}{v3[0]:x}")
+
+    for _ in range(2):
+        hammer.single_step(0)
+
+    current_f1 = hammer.get_fpr(0, 1)
+    if (current_f1 != 0xffffffff3fc00000):
+        sys.exit(f"Unexpected f1: {current_f1:x}")
 
     pass
 

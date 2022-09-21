@@ -84,6 +84,16 @@ void Hammer::set_gpr(uint8_t hart_id, uint8_t gpr_id, reg_t new_gpr_value) {
   hart_state->XPR.write(gpr_id, new_gpr_value);
 }
 
+uint64_t Hammer::get_fpr(uint8_t hart_id, uint8_t fpr_id) {
+  assert(fpr_id < NFPR);
+
+  processor_t *hart = simulator->get_core(hart_id);
+  state_t *hart_state = hart->get_state();
+  freg_t fpr_value = hart_state->FPR[fpr_id];
+
+  return fpr_value.v[0];
+}
+
 reg_t Hammer::get_PC(uint8_t hart_id) {
   processor_t *hart = simulator->get_core(hart_id);
   state_t *hart_state = hart->get_state();
@@ -108,6 +118,11 @@ void Hammer::single_step(uint8_t hart_id) {
   hart->step(1);
 }
 
+uint32_t Hammer::get_flen(uint8_t hart_id) {
+  processor_t *hart = simulator->get_core(hart_id);
+  return hart->get_flen();
+}
+
 reg_t Hammer::get_vlen(uint8_t hart_id) {
   processor_t *hart = simulator->get_core(hart_id);
   return hart->VU.get_vlen();
@@ -119,6 +134,8 @@ reg_t Hammer::get_elen(uint8_t hart_id) {
 }
 
 std::vector<uint64_t> Hammer::get_vector_reg(uint8_t hart_id, uint8_t vector_reg_id) {
+  assert(vector_reg_id < NVPR);
+
   processor_t *hart = simulator->get_core(hart_id);
   uint32_t vlen = hart->VU.get_vlen();
 

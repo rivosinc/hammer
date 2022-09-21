@@ -19,12 +19,16 @@ class Hammer {
   reg_t get_gpr(uint8_t hart_id, uint8_t gpr_id);
   void set_gpr(uint8_t hart_id, uint8_t gpr_id, reg_t new_gpr_value);
 
+  uint64_t get_fpr(uint8_t hart_id, uint8_t fpr_id);
+
   reg_t get_PC(uint8_t hart_id);
   void set_PC(uint8_t hart_id, reg_t new_pc_value);
 
   reg_t get_csr(uint8_t hart_id, uint32_t csr_id);
 
   void single_step(uint8_t hart_id);
+
+  uint32_t get_flen(uint8_t hart_id);
 
   reg_t get_vlen(uint8_t hart_id);
   reg_t get_elen(uint8_t hart_id);
