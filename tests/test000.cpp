@@ -18,6 +18,12 @@ int main(int argc, char *argv[]) {
                          target_binary, std::nullopt);
 
   // hammer.hello_world();
+  uint32_t flen = hammer.get_flen(0);
+  if (flen != 64) {
+    printf("Unexpected flen: %d\n", flen);
+    exit(1);
+  }
+
   uint32_t vlen = hammer.get_vlen(0);
   if (vlen != 512) {
     printf("Unexpected vlen: %d\n", vlen);
@@ -59,13 +65,12 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  for (uint32_t i = 0; i < 12; ++i) {
+  for (uint32_t i = 0; i < 13; ++i) {
     hammer.single_step(0);
   }
 
-  // TODO: add a read of the mstatus CSR which is set by this point
   reg_t current_mstatus = hammer.get_csr(0, MSTATUS_CSR);
-  if (current_mstatus != 0x8000000a00000600) {
+  if (current_mstatus != 0x8000000a00002600) {
     printf("Unexpected mstatus: 0x%" PRIx64 "\n", current_mstatus);
     exit(1);
   }
@@ -109,6 +114,16 @@ int main(int argc, char *argv[]) {
   if (v3[0] != 0x3000 || v3[1] != 0x0 || v3[2] != 0x0 || v3[3] != 0) {
     printf("Unexpected value in v3: 0x%" PRIx64 "%" PRIx64 "%" PRIx64 "%" PRIx64 "\n", v3[3], v3[2],
            v3[1], v3[0]);
+    exit(1);
+  }
+
+  for (uint32_t i = 0; i < 2; ++i) {
+    hammer.single_step(0);
+  }
+
+  uint64_t current_f1 = hammer.get_fpr(0, 1);
+  if (current_f1 != 0xffffffff3fc00000) {
+    printf("Unexpected f1: 0x%" PRIx64 "\n", current_f1);
     exit(1);
   }
 }

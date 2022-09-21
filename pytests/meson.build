@@ -16,7 +16,7 @@ riscv_compiler_parameters = [
 ]
 
 hammer_tests = [
-                ['get GPR, CSR and VecReg values', 'pytest000'],
+                ['get GPR, FPR, CSR and VecReg values', 'pytest000'],
                 ['set GPR values', 'pytest001'],
                 ['get/set memory contents', 'pytest002'],
                 ['set PC', 'pytest003']

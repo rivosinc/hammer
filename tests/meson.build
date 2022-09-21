@@ -21,7 +21,7 @@ else
 endif
 
 hammer_tests = [
-                ['get GPR, CSR and VecReg values', 'test000'],
+                ['get GPR, FPR CSR and VecReg values', 'test000'],
                 ['set GPR values', 'test001'],
                 ['get/set memory contents', 'test002'],
                 ['set PC', 'test003'],
