@@ -65,7 +65,10 @@ def main():
     for _ in range(13):
         hammer.single_step(0)
 
-    # TODO: add a read of the mstatus CSR which is set by this point
+    current_mstatus = hammer.get_csr(0, pyhammer.MSTATUS_CSR)
+    if (current_mstatus != 0x8000000a00002600):
+        sys.exit(f"Unexpected mstatus: {current_mstatus:x}")
+
     current_x1 = hammer.get_gpr(0, 1)
     if (current_x1 != 4):
         sys.exit(f'Unexpected x1 after vsetivli {current_x1}')

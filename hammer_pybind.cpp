@@ -38,4 +38,6 @@ PYBIND11_MODULE(hammer, m) {
   pybind11::enum_<PlatformDefines>(m, "PlatformDefines")
       .value("DramBase", DramBase)
       .export_values();
+
+  pybind11::enum_<CsrDefines>(m, "CsrDefines").value("MSTATUS_CSR", MSTATUS_CSR).export_values();
 }
