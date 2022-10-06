@@ -12,12 +12,9 @@ python3 -m pip install pybind11
 ```
 * Libraries and headers from Spike
 
-The `spike.*.hammer.patch` file included in this repo has the changes to be applied to Spike to work with Hammer.
-
 In the Spike repo run:
 
 ```
-git apply <PATH_TO_HAMMER>/spike.*.hammer.patch
 mkdir build
 cd build/
 ../configure --with-isa=RV64GCV --without-boost --without-boost-asio --without-boost-regex --prefix <SPIKE INSTALL LOCATION>
