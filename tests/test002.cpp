@@ -29,17 +29,20 @@ int main(int argc, char *argv[]) {
 
   uint64_t virtual_address = data_area_start_address;
   for (uint32_t bytes_to_read = 8; bytes_to_read > 0; --bytes_to_read) {
-    std::vector<uint8_t> memory_contents =
-        hammer.get_memory_at_VA(0, virtual_address, bytes_to_read);
+    auto memory_contents = hammer.get_memory_at_VA<uint8_t>(0, virtual_address, bytes_to_read);
+    if (memory_contents.has_value() == false) {
+      printf("ERROR: Unable to read memory\n");
+      exit(1);
+    }
 
-    if (memory_contents.size() != bytes_to_read) {
+    if (memory_contents.value().size() != bytes_to_read) {
       printf("ERROR: Bytes read did not match requested num bytes\n");
       exit(1);
     }
 
     uint64_t value_at_address = 0;
     uint8_t i = 0;
-    for (uint64_t byte_value : memory_contents) {
+    for (uint64_t byte_value : memory_contents.value()) {
       value_at_address |= (byte_value << (i * 8));
       ++i;
     }
@@ -67,7 +70,10 @@ int main(int argc, char *argv[]) {
   }
 
   virtual_address = data_area_start_address;
-  hammer.set_memory_at_VA(0, virtual_address, new_memory_contents);
+  if (hammer.set_memory_at_VA<uint8_t>(0, virtual_address, new_memory_contents)) {
+    printf("ERROR: set_memory_at_VA() failed\n");
+    exit(1);
+  }
 
   // Step the next load that will read the same location
   hammer.single_step(0);
@@ -79,6 +85,18 @@ int main(int argc, char *argv[]) {
            " but "
            "the load instruction returned 0x%" PRIx64 "\n",
            new_value_at_address, current_x2);
+    exit(1);
+  }
+
+  // Tests the fail case.
+  auto memory_contents = hammer.get_memory_at_VA<uint32_t>(0, 0xabcdabcdabcd, 1);
+  if (memory_contents.has_value()) {
+    printf("ERROR: Expected memory load to fail.\n");
+    exit(1);
+  }
+
+  if (hammer.set_memory_at_VA<uint8_t>(0, 0xabcdabcdabcd, new_memory_contents) == 0) {
+    printf("ERROR: Expected memory store to fail.\n");
     exit(1);
   }
 }

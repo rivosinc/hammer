@@ -29,8 +29,48 @@ PYBIND11_MODULE(hammer, m) {
       .def("get_vlen", &Hammer::get_vlen)
       .def("get_elen", &Hammer::get_elen)
       .def("get_vector_reg", &Hammer::get_vector_reg)
-      .def("get_memory_at_VA", &Hammer::get_memory_at_VA)
-      .def("set_memory_at_VA", &Hammer::set_memory_at_VA)
+      .def("get_memory_at_VA",
+           [](Hammer &h, uint8_t hart_id, uint64_t virtual_address, size_t num_bytes_to_read,
+              size_t stride) -> pybind11::object {
+             switch (stride) {
+               case 1:
+                 return pybind11::cast(
+                     h.get_memory_at_VA<uint8_t>(hart_id, virtual_address, num_bytes_to_read));
+               case 2:
+                 return pybind11::cast(
+                     h.get_memory_at_VA<uint16_t>(hart_id, virtual_address, num_bytes_to_read));
+               case 4:
+                 return pybind11::cast(
+                     h.get_memory_at_VA<uint32_t>(hart_id, virtual_address, num_bytes_to_read));
+               case 8:
+                 return pybind11::cast(
+                     h.get_memory_at_VA<uint64_t>(hart_id, virtual_address, num_bytes_to_read));
+               default:
+                 throw std::length_error("Invalid stride");
+             }
+             return pybind11::none();
+           })
+      .def("set_memory_at_VA",
+           [](Hammer &h, uint8_t hart_id, uint64_t virtual_address, pybind11::list &data,
+              size_t stride) {
+             switch (stride) {
+               case 1:
+                 return h.set_memory_at_VA<uint8_t>(hart_id, virtual_address,
+                                                    data.cast<std::vector<uint8_t>>());
+               case 2:
+                 return h.set_memory_at_VA<uint16_t>(hart_id, virtual_address,
+                                                     data.cast<std::vector<uint16_t>>());
+               case 4:
+                 return h.set_memory_at_VA<uint32_t>(hart_id, virtual_address,
+                                                     data.cast<std::vector<uint32_t>>());
+               case 8:
+                 return h.set_memory_at_VA<uint64_t>(hart_id, virtual_address,
+                                                     data.cast<std::vector<uint64_t>>());
+               default:
+                 throw std::length_error("Invalid stride");
+             }
+             return -EINVAL;
+           })
       .def("single_step", &Hammer::single_step);
 
   // Reference:

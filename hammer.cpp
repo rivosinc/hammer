@@ -42,7 +42,11 @@ Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector
   const char *bootargs = nullptr;
   bool real_time_clint = false;
 
-  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, memory_layout,
+  reg_t num_pmpregions = 16;
+
+  endianness_t endinaness = endianness_little;
+
+  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, endinaness, num_pmpregions, memory_layout,
                     hart_ids, real_time_clint);
 
   if (start_pc.has_value()) {
@@ -56,9 +60,10 @@ Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector
 
   bool halted = false;
   bool dtb_enabled = true;
+  bool socket_enabled = false;
 
   simulator = new sim_t(&cfg, halted, mems, plugin_devices, htif_args, dm_config, log_path,
-                        dtb_enabled, dtb_file, cmd_file);
+                        dtb_enabled, dtb_file, socket_enabled, cmd_file);
 
   // Initializes everything
   simulator->start();
@@ -148,50 +153,3 @@ std::vector<uint64_t> Hammer::get_vector_reg(uint8_t hart_id, uint8_t vector_reg
   return vector_reg_value;
 }
 
-std::vector<uint8_t> Hammer::get_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
-                                              size_t num_bytes_to_read) {
-  std::vector<uint8_t> memory_contents;
-
-  processor_t *hart = simulator->get_core(hart_id);
-  mmu_t *mmu = hart->get_mmu();
-
-  while (num_bytes_to_read > 0) {
-    uint64_t bytes_read = 0;
-    size_t num_bytes_read = 0;
-
-    if ((num_bytes_to_read > 8) && (virtual_address % 8) == 0) {
-      bytes_read = mmu->load_uint64(virtual_address);
-      num_bytes_read = 8;
-    } else if ((num_bytes_to_read > 4) && (virtual_address % 4) == 0) {
-      bytes_read = mmu->load_uint32(virtual_address);
-      num_bytes_read = 4;
-    } else if ((num_bytes_to_read > 2) && (virtual_address % 2) == 0) {
-      bytes_read = mmu->load_uint16(virtual_address);
-      num_bytes_read = 2;
-    } else {
-      bytes_read = mmu->load_uint8(virtual_address);
-      num_bytes_read = 1;
-    }
-
-    for (size_t i = 0; i < num_bytes_read; ++i) {
-      memory_contents.push_back(bytes_read & 0xFF);
-      bytes_read >>= 8;
-    }
-
-    virtual_address += num_bytes_read;
-    num_bytes_to_read -= num_bytes_read;
-  }
-
-  return memory_contents;
-}
-
-void Hammer::set_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
-                              const std::vector<uint8_t> &memory_contents) {
-  processor_t *hart = simulator->get_core(hart_id);
-  mmu_t *mmu = hart->get_mmu();
-
-  for (uint8_t byte_to_write : memory_contents) {
-    mmu->store_uint8(virtual_address, byte_to_write);
-    ++virtual_address;
-  }
-}
