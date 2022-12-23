@@ -5,6 +5,7 @@
 #pragma once
 
 #include "hammer_enums.h"
+#include "riscv/mmu.h"
 #include "riscv/sim.h"
 
 #include <iostream>
@@ -35,10 +36,36 @@ class Hammer {
 
   std::vector<uint64_t> get_vector_reg(uint8_t hart_id, uint8_t vector_reg_id);
 
-  std::vector<uint8_t> get_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
-                                        size_t num_bytes_to_read);
-  void set_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
-                        const std::vector<uint8_t> &memory_contents);
+  template <typename T>
+  std::optional<std::vector<T>> get_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
+                                                 size_t num_bytes_to_read) {
+    if (num_bytes_to_read % sizeof(T))
+      return std::nullopt;
+    mmu_t *mmu = simulator->get_core(hart_id)->get_mmu();
+    std::vector<T> data;
+    try {
+      for (size_t i = 0; i < num_bytes_to_read; i += sizeof(T))
+        data.push_back(mmu->load<T>(virtual_address + i));
+    } catch (trap_t &t) {
+      return std::nullopt;
+    }
+    return data;
+  }
+
+  template <typename T>
+  int set_memory_at_VA(uint8_t hart_id, uint64_t virtual_address,
+                       const std::vector<T> &memory_contents) {
+    mmu_t *mmu = simulator->get_core(hart_id)->get_mmu();
+    try {
+      for (auto &i : memory_contents) {
+        mmu->store<T>(virtual_address, i);
+        virtual_address += sizeof(T);
+      }
+    } catch (trap_t &t) {
+      return -EFAULT;
+    }
+    return 0;
+  }
 
   void hello_world() { printf("Hammer: Hello World.\n"); }
 
