@@ -41,13 +41,16 @@ Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector
   std::pair<reg_t, reg_t> initrd_bounds{0, 0};
   const char *bootargs = nullptr;
   bool real_time_clint = false;
+  bool misaligned = false;
+
+  reg_t trigger_count = 4;
 
   reg_t num_pmpregions = 16;
 
   endianness_t endinaness = endianness_little;
 
-  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, endinaness, num_pmpregions, memory_layout,
-                    hart_ids, real_time_clint);
+  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, misaligned, endinaness, num_pmpregions, memory_layout,
+                    hart_ids, real_time_clint, trigger_count);
 
   if (start_pc.has_value()) {
     cfg.start_pc = start_pc.value();
