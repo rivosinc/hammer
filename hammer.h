@@ -13,7 +13,7 @@
 class Hammer {
  public:
   Hammer(const char *isa, const char *privilege_levels, const char *vector_arch,
-         std::vector<int> hart_ids, std::vector<mem_cfg_t> memory_layout,
+         std::vector<size_t> hart_ids, std::vector<mem_cfg_t> memory_layout,
          const std::string target_binary, const std::optional<uint64_t> start_pc = std::nullopt);
   ~Hammer();
 

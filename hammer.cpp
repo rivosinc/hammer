@@ -22,7 +22,7 @@ static std::vector<std::pair<reg_t, mem_t *>> make_mems(const std::vector<mem_cf
 }
 
 Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector_arch,
-               std::vector<int> hart_ids, std::vector<mem_cfg_t> memory_layout,
+               std::vector<size_t> hart_ids, std::vector<mem_cfg_t> memory_layout,
                const std::string target_binary, const std::optional<uint64_t> start_pc) {
   // Expose these only if needed
   std::vector<std::pair<reg_t, abstract_device_t *>> plugin_devices;
