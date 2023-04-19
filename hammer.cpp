@@ -16,13 +16,13 @@ static std::vector<std::pair<reg_t, mem_t *>> make_mems(const std::vector<mem_cf
   std::vector<std::pair<reg_t, mem_t *>> mems;
   mems.reserve(layout.size());
   for (const auto &cfg : layout) {
-    mems.push_back(std::make_pair(cfg.base, new mem_t(cfg.size)));
+    mems.push_back(std::make_pair(cfg.get_base(), new mem_t(cfg.get_size())));
   }
   return mems;
 }
 
 Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector_arch,
-               std::vector<int> hart_ids, std::vector<mem_cfg_t> memory_layout,
+               std::vector<size_t> hart_ids, std::vector<mem_cfg_t> memory_layout,
                const std::string target_binary, const std::optional<uint64_t> start_pc) {
   // Expose these only if needed
   std::vector<std::pair<reg_t, abstract_device_t *>> plugin_devices;
@@ -41,13 +41,16 @@ Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector
   std::pair<reg_t, reg_t> initrd_bounds{0, 0};
   const char *bootargs = nullptr;
   bool real_time_clint = false;
+  bool misaligned = false;
+
+  reg_t trigger_count = 4;
 
   reg_t num_pmpregions = 16;
 
   endianness_t endinaness = endianness_little;
 
-  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, endinaness, num_pmpregions, memory_layout,
-                    hart_ids, real_time_clint);
+  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, misaligned, endinaness, num_pmpregions, memory_layout,
+                    hart_ids, real_time_clint, trigger_count);
 
   if (start_pc.has_value()) {
     cfg.start_pc = start_pc.value();

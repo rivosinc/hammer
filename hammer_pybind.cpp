@@ -15,7 +15,7 @@ PYBIND11_MODULE(hammer, m) {
   pybind11::class_<mem_t>(m, "mem_t").def(pybind11::init<reg_t>());
 
   pybind11::class_<Hammer>(m, "Hammer")
-      .def(pybind11::init<const char *, const char *, const char *, std::vector<int>,
+      .def(pybind11::init<const char *, const char *, const char *, std::vector<size_t>,
                           std::vector<mem_cfg_t>, const std::string,
                           const std::optional<uint64_t>>())
       .def("hello_world", &Hammer::hello_world)

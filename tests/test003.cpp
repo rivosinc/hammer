@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   std::vector<std::string> htif_args;
   htif_args.push_back(target_binary);
 
-  std::vector<int> hart_ids{0};
+  std::vector<size_t> hart_ids{0};
 
   Hammer hammer = Hammer("RV64GCV", "MSU", "vlen:512,elen:64", hart_ids, memory_layout,
                          target_binary, std::nullopt);
