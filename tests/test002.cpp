@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   // This is what Spike sets it to
   memory_layout.push_back(mem_cfg_t(reg_t(DRAM_BASE), reg_t(2048) << 20));
 
-  std::vector<int> hart_ids{0};
+  std::vector<size_t> hart_ids{0};
 
   Hammer hammer = Hammer("RV64GCV", "MSU", "vlen:512,elen:64", hart_ids, memory_layout,
                          target_binary, std::nullopt);
