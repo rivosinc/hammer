@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Rivos Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # GCC has trouble with some of the compiler flags so use clang instead.
 
 [binaries]

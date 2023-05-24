@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022 by Rivos Inc.
-// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-FileCopyrightText: 2022 Rivos Inc.
+//
 // SPDX-License-Identifier: Apache-2.0
 
 #include "riscv/encoding.h"
