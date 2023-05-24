@@ -1,4 +1,12 @@
+<!--
+SPDX-FileCopyrightText: 2023 Rivos Inc.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Hammer
+
+[![REUSE status](https://api.reuse.software/badge/github.com/rivosinc/hammer)](https://api.reuse.software/info/github.com/rivosinc/hammer)
 
 Infrastructure to drive Spike (RISC-V ISA Simulator) in cosim mode. Hammer provides a C++ and Python interface to interact with Spike.
 

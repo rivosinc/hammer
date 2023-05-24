@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Rivos Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 project('hammer lib', 'cpp',
         default_options : [
           'cpp_std=c++20',

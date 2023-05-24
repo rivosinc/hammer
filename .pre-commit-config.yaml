@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Rivos Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 repos:
   # pull mirror from: https://github.com/pre-commit/pre-commit-hooks
   - repo: https://gitlab.ba.rivosinc.com/pub/it/pre-commit-hooks.git
@@ -40,22 +44,12 @@ repos:
     hooks:
       - id: yapf
 
-  # pull mirror from: https://github.com/Lucas-C/pre-commit-hooks
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/lucas-c-pre-commit-hooks
-    rev: v1.1.11
+  # pull mirror of https://github.com/fsfe/reuse-tool (slightly modified)
+  - repo: https://github.com/rivosinc/reuse-tool
+    rev: '3a95909a30d51467575a95b8cabdc7949bb8e7bd'
     hooks:
-      - id: insert-license
-        files: \.py$
-        args:
-          - --license-filepath
-          - LICENSE_HDR.txt
-      - id: insert-license
-        files: \.(c|h|cc|cpp|S|svh|sv|svp)$
-        args:
-          - --license-filepath
-          - LICENSE_HDR.txt
-          - --comment-style
-          - //
+      # Check compliance
+      - id: reuse
 
   # pull mirror from: https://github.com/jumanjihouse/pre-commit-hooks.git
   - repo: https://gitlab.ba.rivosinc.com/pub/it/jumanjihouse_pre-commit-hooks

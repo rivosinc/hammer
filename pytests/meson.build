@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2023 Rivos Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
 
 riscv_compiler = find_program('riscv64-unknown-elf-gcc', required : true)
 
