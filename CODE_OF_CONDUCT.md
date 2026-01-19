@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Rivos Inc.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Code of Conduct
 
 ## Our Pledge
