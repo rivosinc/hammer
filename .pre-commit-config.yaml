@@ -1,11 +1,10 @@
-# SPDX-FileCopyrightText: 2023 Rivos Inc.
+# SPDX-FileCopyrightText: 2023 - 2026 Rivos Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 
 repos:
-  # pull mirror from: https://github.com/pre-commit/pre-commit-hooks
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/pre-commit-hooks.git
-    rev: v4.1.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -28,9 +27,8 @@ repos:
         args: [--markdown-linebreak-ext=md]
         exclude: ".patch"
 
-  # - repo: https://github.com/PyCQA/isort
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/isort
-    rev: "5.10.1"
+  - repo: https://github.com/PyCQA/isort
+    rev: "7.0.0"
     hooks:
       - id: isort
         args:
@@ -38,28 +36,25 @@ repos:
           - google
           - --filter-files
 
-  # pull mirror from: https://github.com/google/yapf
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/yapf
-    rev: v0.31.0
+  - repo: https://github.com/google/yapf
+    rev: v0.43.0
     hooks:
       - id: yapf
 
-  # pull mirror of https://github.com/fsfe/reuse-tool (slightly modified)
+  # pull mirror of https://github.com/fsfe/reuse-tool
   - repo: https://github.com/rivosinc/reuse-tool
-    rev: '3a95909a30d51467575a95b8cabdc7949bb8e7bd'
+    rev: 'da430ed605e06460b020a75410d62ddb7fc9a616'
     hooks:
       # Add copyright/license header
       - id: reuse-annotate
         args:
-          - -c=Rivos Inc.
-          - -l=Apache-2.0
+          - -c Rivos Inc.
+          - -l Apache-2.0
+          - --merge-copyrights
           - --skip-unrecognised
-      # Check compliance
-      - id: reuse
 
-  # pull mirror from: https://github.com/jumanjihouse/pre-commit-hooks.git
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/jumanjihouse_pre-commit-hooks
-    rev: 2.1.5
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
     hooks:
       - id: shellcheck
       - id: shfmt
@@ -67,20 +62,17 @@ repos:
           - -i 2
           - -ci
 
-  # pull mirror of https://github.com/ikamensh/flynt/
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/flynt
-    rev: '0.76'
+  - repo: https://github.com/ikamensh/flynt
+    rev: '1.0.6'
     hooks:
       - id: flynt
 
-  # pull mirror of https://github.com/asottile/pyupgrade
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/pyupgrade
-    rev: v2.31.0
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
 
-  # mirror of https://github.com/pre-commit/mirrors-clang-format
-  - repo: https://gitlab.ba.rivosinc.com/pub/it/mirrors-clang-format
-    rev: v13.0.1
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v21.1.8
     hooks:
       - id: clang-format

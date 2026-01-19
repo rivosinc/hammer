@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Rivos Inc.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Contributing to hammer
 We want to make contributing to this project as easy and transparent as
 possible.

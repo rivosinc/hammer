@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Rivos Inc.
+// SPDX-FileCopyrightText: 2022 - 2026 Rivos Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -49,8 +49,9 @@ Hammer::Hammer(const char *isa, const char *privilege_levels, const char *vector
 
   endianness_t endinaness = endianness_little;
 
-  cfg_t cfg = cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, misaligned, endinaness, num_pmpregions, memory_layout,
-                    hart_ids, real_time_clint, trigger_count);
+  cfg_t cfg =
+      cfg_t(initrd_bounds, bootargs, isa, privilege_levels, vector_arch, misaligned, endinaness,
+            num_pmpregions, memory_layout, hart_ids, real_time_clint, trigger_count);
 
   if (start_pc.has_value()) {
     cfg.start_pc = start_pc.value();
@@ -155,4 +156,3 @@ std::vector<uint64_t> Hammer::get_vector_reg(uint8_t hart_id, uint8_t vector_reg
 
   return vector_reg_value;
 }
-
